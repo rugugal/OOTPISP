@@ -1,0 +1,70 @@
+﻿<Window x:Class="WpfApp1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfApp1"
+        xmlns:model="clr-namespace:WpfApp1.Model" d:DataContext="{d:DesignInstance Type=model:Payment}"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="630" Width="800">
+
+    <Grid>
+
+
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="10,10, 10,10">
+            <TextBlock FontSize="14" FontWeight="Bold">Управление абонентами</TextBlock>
+            <Button Name="btnAddSubscriber" Click="btnAddSubscriber_Click" Margin="5" Content="Добавить абонента"/>
+
+            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,20,0,0">Список абонентов</TextBlock>
+            <ListBox Name="listSubscribers" Height="100" Margin="5"
+                     ItemsSource="{Binding Subscribers}" 
+                     SelectedItem="{Binding SelectedSubscriber, Mode=TwoWay}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <DockPanel LastChildFill="False">
+                            <!-- Информация о подписчике слева -->
+                            <TextBlock Text="{Binding Name}" Width="200" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                            <TextBlock Text="{Binding PhoneNumber}" Width="250" VerticalAlignment="Center" DockPanel.Dock="Left"/>
+                            <StackPanel  DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
+                                <Button Content="Удалить" Width="100" Margin="5" Click="DeleteSubscriber_Click" HorizontalAlignment="Right"  DockPanel.Dock="Right"/>
+                                <Button Content="Редактировать" Width="150" Margin="5" Click="EditSubscriber_Click" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                            </StackPanel>
+                            
+                        </DockPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+
+            </ListBox>
+
+            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,20,0,0">Платежи</TextBlock>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Name="btnAddCardPayment" Click="btnAddCardPayment_Click" Margin="5"   Content="Добавить платеж по карте"/>
+                <Button Name="btnAddCashPayment" Click="btnAddCashPayment_Click" Margin="5" Content="Добавить платеж наличными"/>
+            </StackPanel>
+            
+
+            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,10,0,0">Список платежей</TextBlock>
+            <ListBox Name="listPayments" Height="100" Margin="5" ItemsSource="{Binding Payments}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Name="btnSetHtmlFormat" Click="SetHtmlFormat_Click" Margin="5" Content="Вывести HTML формат"/>
+                <Button Name="btnSetTextFormat" Click="SetTextFormat_Click" Margin="5" Content="Вывести текстовый формат"/>
+            </StackPanel>
+            <ListBox Name="listFormattedPayments" Height="120" Margin="5" ItemsSource="{Binding FormattedPayments}">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+
+        </StackPanel>
+    </Grid>
+</Window>
