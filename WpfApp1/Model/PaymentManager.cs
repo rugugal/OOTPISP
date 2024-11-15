@@ -10,7 +10,7 @@ namespace WpfApp1.Model
         public ObservableCollection<Payment> Payments { get; private set; }
         public IFormatStrategy FormatStrategy { get; set; }
         public ObservableCollection<string> FormattedPayments { get; }
-
+        
         public PaymentManager()
         {
             Subscribers = new ObservableCollection<Subscriber>();
@@ -23,6 +23,7 @@ namespace WpfApp1.Model
         public void SetFormatStrategy(IFormatStrategy formatStrategy)
         {
             FormatStrategy = formatStrategy;
+            var test = "test";
         }
 
         public string FormatPayment(Payment payment)
