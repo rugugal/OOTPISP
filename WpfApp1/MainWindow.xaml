@@ -6,13 +6,12 @@
         xmlns:local="clr-namespace:WpfApp1"
         xmlns:model="clr-namespace:WpfApp1.Model" d:DataContext="{d:DesignInstance Type=model:Payment}"
         mc:Ignorable="d"
-        Title="MainWindow" Height="630" Width="800">
+        Title="MainWindow" Height="630" Width="900">
 
     <Grid>
 
 
-        <StackPanel Grid.Row="0" Grid.Column="0" Margin="10,10, 10,10">
-            <TextBlock FontSize="14" FontWeight="Bold">Управление абонентами</TextBlock>
+        <StackPanel Grid.Row="0" Grid.Column="0" Margin="10,2, 10,10">
             <Button Name="btnAddSubscriber" Click="btnAddSubscriber_Click" Margin="5" Content="Добавить абонента"/>
 
             <TextBlock FontSize="14" FontWeight="Bold" Margin="0,20,0,0">Список абонентов</TextBlock>
@@ -28,21 +27,39 @@
                             <StackPanel  DockPanel.Dock="Right" HorizontalAlignment="Right" Orientation="Horizontal">
                                 <Button Content="Удалить" Width="100" Margin="5" Click="DeleteSubscriber_Click" HorizontalAlignment="Right"  DockPanel.Dock="Right"/>
                                 <Button Content="Редактировать" Width="150" Margin="5" Click="EditSubscriber_Click" HorizontalAlignment="Right" DockPanel.Dock="Right"/>
+                                <Button Content="Подписаться" Click="SubscribeUser_Click" Margin="5" Width="120">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Visibility" Value="Visible" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSubscribed}" Value="True">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
+                                <Button Content="Отписаться" Click="UnsubscribeUser_Click" Margin="5" Width="120">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource {x:Type Button}}">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsSubscribed}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+
                             </StackPanel>
-                            
+
                         </DockPanel>
                     </DataTemplate>
                 </ListBox.ItemTemplate>
 
             </ListBox>
-
-            <TextBlock FontSize="14" FontWeight="Bold" Margin="0,20,0,0">Платежи</TextBlock>
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                <Button Name="btnAddCardPayment" Click="btnAddCardPayment_Click" Margin="5"   Content="Добавить платеж по карте"/>
-                <Button Name="btnAddCashPayment" Click="btnAddCashPayment_Click" Margin="5" Content="Добавить платеж наличными"/>
-            </StackPanel>
-            
-
             <TextBlock FontSize="14" FontWeight="Bold" Margin="0,10,0,0">Список платежей</TextBlock>
             <ListBox Name="listPayments" Height="100" Margin="5" ItemsSource="{Binding Payments}">
                 <ListBox.ItemTemplate>
@@ -51,8 +68,9 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
-
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button Name="btnAddCardPayment" Click="btnAddCardPayment_Click" Margin="5"   Content="Добавить платеж по карте"/>
+                <Button Name="btnAddCashPayment" Click="btnAddCashPayment_Click" Margin="5" Content="Добавить платеж наличными"/>
                 <Button Name="btnSetHtmlFormat" Click="SetHtmlFormat_Click" Margin="5" Content="Вывести HTML формат"/>
                 <Button Name="btnSetTextFormat" Click="SetTextFormat_Click" Margin="5" Content="Вывести текстовый формат"/>
             </StackPanel>
@@ -63,6 +81,15 @@
                     </DataTemplate>
                 </ListBox.ItemTemplate>
             </ListBox>
+            <TextBox Name="txtNotifications" 
+                 Height="100" 
+                 Margin="5" 
+                 VerticalScrollBarVisibility="Auto" 
+                 IsReadOnly="True" 
+                 TextWrapping="Wrap"
+                 Text="{Binding Notifications, Mode=OneWay}"/>
+
+
 
 
         </StackPanel>

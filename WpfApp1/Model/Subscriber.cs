@@ -1,9 +1,10 @@
 ﻿using System;
 using System.ComponentModel;
+using WpfApp1.Interface;
 
 namespace WpfApp1.Model
 {
-    public class Subscriber : INotifyPropertyChanged
+    public class Subscriber : INotifyPropertyChanged, IObserver
     {
         public Guid Id { get; set; }
         private string name;
@@ -26,6 +27,31 @@ namespace WpfApp1.Model
                 OnPropertyChanged(nameof(PhoneNumber));
             }
         }
+        private bool isSubscribed;
+        public bool IsSubscribed
+        {
+            get => isSubscribed;
+            set
+            {
+                if (isSubscribed != value)
+                {
+                    isSubscribed = value;
+                    OnPropertyChanged(nameof(IsSubscribed));
+                }
+            }
+        }
+
+
+        public string Update(string message)
+        {
+            if (!IsSubscribed)
+            {
+                return "";
+            }
+            return $"{Name} получил уведомление: {message}";
+        }
+
+
         public event PropertyChangedEventHandler PropertyChanged;
         protected void OnPropertyChanged(string propertyName)
         {

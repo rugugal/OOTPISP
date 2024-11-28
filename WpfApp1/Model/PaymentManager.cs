@@ -1,15 +1,20 @@
-﻿using System;
+﻿using Microsoft.VisualBasic.ApplicationServices;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using WpfApp1.Interface;
 
 namespace WpfApp1.Model
 {
-    public class PaymentManager
+    public class PaymentManager : IObservable
     {
         public ObservableCollection<Subscriber> Subscribers { get; }
         public ObservableCollection<Payment> Payments { get; private set; }
         public IFormatStrategy FormatStrategy { get; set; }
         public ObservableCollection<string> FormattedPayments { get; }
+
+        private readonly List<IObserver> observers;
 
         public PaymentManager()
         {
@@ -17,6 +22,21 @@ namespace WpfApp1.Model
             Payments = new ObservableCollection<Payment>();
             FormattedPayments = new ObservableCollection<string>();
             FormatStrategy = new TextFormatStrategy();
+            observers = new List<IObserver>();
+        }
+        public void AddObserver(IObserver observer)
+        {
+            observers.Add(observer);
+        }
+
+        public void DeleteObserver(IObserver observer)
+        {
+            observers.Remove(observer);
+        }
+
+        public string Notify(string message, IObserver observer)
+        {
+            return observer.Update(message);
         }
 
 
@@ -50,13 +70,11 @@ namespace WpfApp1.Model
                 subscriber.Name = name;
                 subscriber.PhoneNumber = phoneNumber;
 
-                // Обновляем имя во всех платежах данного абонента с удалением и вставкой
                 for (int i = 0; i < Payments.Count; i++)
                 {
                     var payment = Payments[i];
                     if (payment.SubscriberId == id)
                     {
-                        // Удаляем, обновляем и вставляем элемент на прежнюю позицию
                         Payments.RemoveAt(i);
                         payment.SubscriberName = name;
                         Payments.Insert(i, payment);
@@ -75,16 +93,26 @@ namespace WpfApp1.Model
 
             }
         }
+        public IObserver FindSubscriber(Guid id)
+        {
+            var subscriber = Subscribers.FirstOrDefault(s => s.Id == id);
+            return subscriber;
+        }
+
         public Payment AddCardPayment(Guid subscriberId, decimal amount, string cardNumber, string subscriberName, string paymentType)
         {
             var payment = new CardPayment(subscriberId, amount, cardNumber, subscriberName, paymentType);
             Payments.Add(payment);
+            Notify($"Платеж для {subscriberName}: {amount} ({paymentType}) выполнен.", FindSubscriber(subscriberId));
+
             return payment;
         }
+
         public Payment AddCashPayment(Guid subscriberId, decimal amount, string subscriberName)
         {
             var payment = new CashPayment(subscriberId, amount, subscriberName);
             Payments.Add(payment);
+            Notify($"Платеж для {subscriberName}: {amount} (наличные) выполнен.", FindSubscriber(subscriberId));
             return payment;
         }
     }

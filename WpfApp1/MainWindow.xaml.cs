@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Media;
 using WpfApp1.Model;
 
@@ -13,6 +15,7 @@ namespace WpfApp1
     {
         private PaymentManager paymentManager;
         private Brush originalButtonBackground;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -78,17 +81,20 @@ namespace WpfApp1
                 MessageBox.Show("Выберите абонента");
                 return;
             }
-
             var addCardPaymentWindow = new AddCardPaymentWindow();
             if (addCardPaymentWindow.ShowDialog() == true)
             {
 
                 var Card = addCardPaymentWindow.CardNumber;
-                paymentManager.AddCardPayment(selectedSubscriber.Id, addCardPaymentWindow.Amount,
+                var payment = paymentManager.AddCardPayment(selectedSubscriber.Id, addCardPaymentWindow.Amount,
                     addCardPaymentWindow.CardNumber, selectedSubscriber.Name, $"карта ({Card})");
+                AddNotification(paymentManager.Notify(payment.ToString(), selectedSubscriber));
 
             }
             DisplayFormatted(paymentManager.Payments);
+
+            
+
         }
 
         private void btnAddCashPayment_Click(object sender, RoutedEventArgs e)
@@ -98,15 +104,17 @@ namespace WpfApp1
                 MessageBox.Show("Выберите абонента");
                 return;
             }
-
             var addCashPaymentWindow = new AddCashPaymentWindow();
             if (addCashPaymentWindow.ShowDialog() == true)
             {
 
-                paymentManager.AddCashPayment(selectedSubscriber.Id, addCashPaymentWindow.Amount,
+                var payment = paymentManager.AddCashPayment(selectedSubscriber.Id, addCashPaymentWindow.Amount,
                     selectedSubscriber.Name);
+                AddNotification(paymentManager.Notify(payment.ToString(), selectedSubscriber));
             }
+            
             DisplayFormatted(paymentManager.Payments);
+            
         }
 
 
@@ -153,6 +161,39 @@ namespace WpfApp1
                 paymentManager.FormattedPayments.Add(paymentManager.FormatPayment(payment)); 
             }
         }
+
+        // Метод для добавления текста в TextBox
+        private void AddNotification(string message)
+        {
+            if (message != "") txtNotifications.Text += $"{DateTime.Now}: {message}{Environment.NewLine}";
+        }
+
+
+
+        private void SubscribeUser_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedSubscriber = (sender as Button)?.DataContext as Subscriber;
+            if (selectedSubscriber != null)
+            {
+                selectedSubscriber.IsSubscribed = true; // Устанавливаем состояние подписки
+                AddNotification($"{selectedSubscriber.Name} подписан на уведомления.");
+            }
+        }
+
+        private void UnsubscribeUser_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedSubscriber = (sender as Button)?.DataContext as Subscriber;
+            if (selectedSubscriber != null)
+            {
+                selectedSubscriber.IsSubscribed = false; // Снимаем состояние подписки
+                AddNotification($"{selectedSubscriber.Name} отписан от уведомлений.");
+            }
+        }
+
+
+
+
+
 
 
     }
